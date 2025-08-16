@@ -97,7 +97,10 @@ jobs:
             echo "$JSON_BODY_DECISION" | jq 
             echo "Flow ID $FLOW_ID updated successfully."
             echo "Patch API Response: $RESPONSE_NODES"
-            
+
+            for NODE_ID in $(echo "$RESPONSE_NODES" | jq -r '.data.graph[].node_id'); do
+              echo "Patch Node for Node ID: $NODE_ID"
+
           done
           
             
