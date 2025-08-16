@@ -43,7 +43,6 @@ jobs:
 
       # Return a list of Decision Flows in a NB36’s workspace.
       - name: List Decision Flows
-        id: get_flow_id
         run: |
           RESPONSE=$(curl -X 'POST' \
             'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/list-decision-graphs/sandbox/decide' \
@@ -65,30 +64,27 @@ jobs:
 
           echo "List Decision Flows API Response: $RESPONSE"
 
-          FLOW_ID=$(echo "$RESPONSE" | jq -r '.data.flows.flow_id')
-          echo "Flow ID: $FLOW_ID"
+          for FLOW_ID in $(echo "$RESPONSE" | jq -r '.data.flows[].flow_id'); do
+            echo "Patch Decision Graph for Flow ID: $FLOW_ID"
+            curl -X 'POST' \
+              'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/get-decision-graph/sandbox/decide' \
+              -H 'accept: application/json' \
+              -H 'Content-Type: application/json' \
+              -H 'X-Api-Key: ${{ secrets.TAKTILE_API_KEY }}' \
+              -d '{
+              "data": {
+                "flow_id": $FLOW_ID
+              },
+              "metadata": {
+                "version": "v1.0",
+                "entity_id": "string"
+              },
+              "control": {
+                "execution_mode": "sync"
+              }
+            }'
+            echo "Flow ID $FLOW_ID updated successfully."
+          done
 
-          echo "flow_id=$FLOW_ID" >> $GITHUB_OUTPUT
-
-      # Return an overview of the nodes in a specific graph
-      - name: Get Decision Graph
-        id: get_deicision_graph
-        run: |
-          curl -X 'POST' \
-            'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/get-decision-graph/sandbox/decide' \
-            -H 'accept: application/json' \
-            -H 'Content-Type: application/json' \
-            -H 'X-Api-Key: ${{ secrets.TAKTILE_API_KEY }}' \
-            -d '{
-            "data": {
-              "flow_id": ${{ steps.get_flow_id.outputs.flow_id }}
-            },
-            "metadata": {
-              "version": "v1.0",
-              "entity_id": "string"
-            },
-            "control": {
-              "execution_mode": "sync"
-            }
-          }'
+          
       
