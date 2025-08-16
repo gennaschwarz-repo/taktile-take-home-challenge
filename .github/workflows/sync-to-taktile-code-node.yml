@@ -83,14 +83,17 @@ jobs:
           }
           EOF
           )
+
             
             curl -X 'POST' \
               'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/get-decision-graph/sandbox/decide' \
               -H 'accept: application/json' \
               -H 'Content-Type: application/json' \
               -H 'X-Api-Key: ${{ secrets.TAKTILE_API_KEY }}' \
-              -d '$JSON_BODY'
-            
+              -d "$JSON_BODY"
+
+            echo "DEBUG: Payload being sent:"
+            echo "$JSON_BODY" | jq 
             echo "Flow ID $FLOW_ID updated successfully."
           
           done
