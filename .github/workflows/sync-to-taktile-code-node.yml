@@ -45,7 +45,7 @@ jobs:
       - name: List Decision Flows
         id: get_flow_id
         run: |
-          curl -X 'POST' \
+          RESPONSE=$(curl -X 'POST' \
             'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/list-decision-graphs/sandbox/decide' \
             -H 'accept: application/json' \
             -H 'Content-Type: application/json' \
@@ -61,7 +61,7 @@ jobs:
             "control": {
               "execution_mode": "sync"
             }
-          }'
+          }')
 
           echo "List Decision Flows API Response: $RESPONSE"
 
