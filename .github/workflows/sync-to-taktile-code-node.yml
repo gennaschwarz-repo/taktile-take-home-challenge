@@ -69,20 +69,20 @@ jobs:
             echo "Patch Decision Graph for Flow ID: $FLOW_ID"
            
             JSON_BODY=$(cat <<EOF
-{
-  "data": {
-    "flow_id": "$FLOW_ID"
-  },
-  "metadata": {
-    "version": "v1.0",
-    "entity_id": "string"
-  },
-  "control": {
-    "execution_mode": "sync"
-  }
-}
-EOF
-)
+          {
+            "data": {
+              "flow_id": "$FLOW_ID"
+            },
+            "metadata": {
+              "version": "v1.0",
+              "entity_id": "string"
+            },
+            "control": {
+              "execution_mode": "sync"
+            }
+          }
+          EOF
+          )
             
             curl -X 'POST' \
               'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/get-decision-graph/sandbox/decide' \
