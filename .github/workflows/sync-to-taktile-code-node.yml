@@ -75,7 +75,7 @@ jobs:
               -H 'X-Api-Key: ${{ secrets.TAKTILE_API_KEY }}' \
               -d '{
               "data": {
-                "flow_id": "${{ FLOW_ID }}"
+                "flow_id": "${{ run.FLOW_ID }}"
               },
               "metadata": {
                 "version": "v1.0",
