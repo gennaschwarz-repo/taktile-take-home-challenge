@@ -44,6 +44,7 @@ jobs:
       # Return a list of Decision Flows in a NB36’s workspace.
       - name: List Decision Flows
         run: |
+          set -x
           RESPONSE=$(curl -X 'POST' \
             'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/list-decision-graphs/sandbox/decide' \
             -H 'accept: application/json' \
