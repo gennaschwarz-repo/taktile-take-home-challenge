@@ -100,7 +100,7 @@ jobs:
 
             for NODE_ID in $(echo "$RESPONSE_NODES" | jq -r '.data.graph[].node_id'); do
               echo "Patch Node for Node ID: $NODE_ID"
-
+            done
           done
           
             
