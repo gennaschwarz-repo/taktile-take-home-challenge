@@ -70,19 +70,20 @@ jobs:
           for FLOW_ID in $(echo "$RESPONSE" | jq -r '.data.flows[].flow_id'); do
             echo "Patch Decision Graph for Flow ID: $FLOW_ID"
             
-            JSON_BODY=$(
-              {
-                  "data": {
-                    "flow_id": "06457ab1-3367-43c3-9e6b-4dbaa88d1b1b"
-                  },
-                  "metadata": {
-                    "version": "v1.0",
-                    "entity_id": "string"
-                  },
-                  "control": {
-                    "execution_mode": "sync"
-                  }
-                }
+            JSON_BODY=$(cat <<EOF
+            {
+              "data": {
+                "flow_id": "06457ab1-3367-43c3-9e6b-4dbaa88d1b1b"
+              },
+              "metadata": {
+                "version": "v1.0",
+                "entity_id": "string"
+              },
+              "control": {
+                "execution_mode": "sync"
+              }
+            }
+            EOF
             )
             
             curl -X 'POST' \
