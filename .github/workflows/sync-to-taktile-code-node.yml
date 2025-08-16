@@ -29,7 +29,7 @@ jobs:
       - name: Read Python file
         id: read_code_files
         run: |
-          FILE_PATH="taktile-take-home-challenge/Multiply.py"
+          FILE_PATH="Multiply.py"
           CONTENT=$(cat $FILE_PATH | jq -Rs .)
           echo "code=$CONTENT" >> $GITHUB_OUTPUT
 
@@ -42,7 +42,7 @@ jobs:
             'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/list-decision-graphs/sandbox/decide' \
             -H 'accept: application/json' \
             -H 'Content-Type: application/json' \
-            -H 'X-Api-Key: <API_KEY>' \
+            -H 'X-Api-Key: c179117d-a4ce-4635-a268-b37d13668515' \
             -d '{
             "data": {
               "organization_name": "NB36"
