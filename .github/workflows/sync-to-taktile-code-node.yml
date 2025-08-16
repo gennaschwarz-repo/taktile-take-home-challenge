@@ -25,22 +25,33 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
-      # Runs a single command using the runners shell
+      # Read the multiply python file
       - name: Read Python file
-        id: read_code_files
+        id: read_multiple
         run: |
           FILE_PATH="Multiply.py"
           CONTENT=$(cat $FILE_PATH | jq -Rs .)
           echo "code=$CONTENT" >> $GITHUB_OUTPUT
 
-      # Runs a set of commands using the runners shell
+      # Read the multiply python file
+      - name: Read Python file
+        id: read_summarize
+        run: |
+          FILE_PATH="Summarize.py"
+          CONTENT=$(cat $FILE_PATH | jq -Rs .)
+          echo "code=$CONTENT" >> $GITHUB_OUTPUT
+
+      # Return a list of Decision Flows in a NB36’s workspace.
       - name: List Decision Flows
+        id: get_flow_id
+        env:
+          API_KEY: ${{ secrets.TAKTILE_API_KEY }}
         run: |
           curl -X 'POST' \
             'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/list-decision-graphs/sandbox/decide' \
             -H 'accept: application/json' \
             -H 'Content-Type: application/json' \
-            -H 'X-Api-Key: ${{ secrets.TAKTILE_API_KEY }}' \
+            -H 'X-Api-Key: $API_KEY' \
             -d '{
             "data": {
               "organization_name": "NB36"
@@ -53,3 +64,36 @@ jobs:
               "execution_mode": "sync"
             }
           }'
+
+          echo "List Decision Flows API Response: $RESPONSE"
+
+          FLOW_ID=$(echo "$RESPONSE" | jq -r '.data.flows.flow_id')
+          echo "Flow ID: $FLOW_ID"
+
+          echo "flow_id=$FLOW_ID" >> $GITHUB_OUTPUT
+
+      # Return an overview of the nodes in a specific graph
+      - name: Get Decision Graph
+        id: get_deicision_graph
+        env:
+          API_KEY: ${{ secrets.TAKTILE_API_KEY }}
+          FLOW_ID: ${{ steps.get_flow_id.outputs.flow_id }}
+        run: |
+          curl -X 'POST' \
+            'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/get-decision-graph/sandbox/decide' \
+            -H 'accept: application/json' \
+            -H 'Content-Type: application/json' \
+            -H 'X-Api-Key: $API_KEY' \
+            -d '{
+            "data": {
+              "flow_id": $FLOW_ID
+            },
+            "metadata": {
+              "version": "v1.0",
+              "entity_id": "string"
+            },
+            "control": {
+              "execution_mode": "sync"
+            }
+          }'
+      
