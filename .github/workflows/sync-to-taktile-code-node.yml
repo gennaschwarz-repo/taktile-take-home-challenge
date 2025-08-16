@@ -70,10 +70,14 @@ jobs:
           for FLOW_ID in $(echo "$RESPONSE" | jq -r '.data.flows[].flow_id'); do
             echo "Patch Decision Graph for Flow ID: $FLOW_ID"
 
-            JSON_BODY=$(cat <<EOF 
-            {
+            curl -X 'POST' \
+              'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/get-decision-graph/sandbox/decide' \
+              -H 'accept: application/json' \
+              -H 'Content-Type: application/json' \
+              -H 'X-Api-Key: ${{ secrets.TAKTILE_API_KEY }}' \
+              -d '{
               "data": {
-                "flow_id": "$FLOW_ID"
+                "flow_id": "06457ab1-3367-43c3-9e6b-4dbaa88d1b1b"
               },
               "metadata": {
                 "version": "v1.0",
@@ -82,19 +86,7 @@ jobs:
               "control": {
                 "execution_mode": "sync"
               }
-            }
-            EOF
-            )
-            
-            
-            echo "$JSON_BODY"
-            
-            curl -X 'POST' \
-              'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/get-decision-graph/sandbox/decide' \
-              -H 'accept: application/json' \
-              -H 'Content-Type: application/json' \
-              -H 'X-Api-Key: ${{ secrets.TAKTILE_API_KEY }}' \
-              -d '$JSON_BODY'
+            }'
             
             echo "Flow ID $FLOW_ID updated successfully."
           
