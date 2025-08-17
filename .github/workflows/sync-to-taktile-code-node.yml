@@ -66,14 +66,15 @@ jobs:
           
           echo "response_flows=$RESPONSE_FLOWS" >> $GITHUB_OUTPUT
 
-          FLOWS=$(echo "$RESPONSE_FLOWS" | jq -r '.data.flows[]')
+          FLOWS=$(echo "$RESPONSE_FLOWS" | jq -r '.data.flows[].flow_id')
           echo "Decision Flows: "
           echo "$FLOWS"
+          echo "flows_ids=$FLOWS" >> $GITHUB_OUTPUT
 
       - name: Get Decision Graph
         id: graph
         run: |
-          for FLOW_ID in $(echo ${{ steps.flows.outputs.response_flows }} | jq -r '.data.flows[].flow_id'); do
+          for FLOW_ID in ${{ steps.flows.outputs.flow_ids }}; do
             echo "Retrieve Decision Graph for Flow ID: $FLOW_ID"
            
             JSON_BODY_DECISION=$(cat <<EOF
