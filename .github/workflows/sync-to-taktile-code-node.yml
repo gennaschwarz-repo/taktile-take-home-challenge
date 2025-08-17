@@ -91,6 +91,42 @@ jobs:
           EOF
           )
 
+            JSON_BODY_SUMMMARIZE=$(cat <<EOF
+          {
+            "data": {
+              "flow_id": "$FLOW_ID",
+              "node_id": "$NODE_ID",
+              "src_code": "$SUMMARIZE_CODE"
+            },
+            "metadata": {
+              "version": "v1.0",
+              "entity_id": "string"
+            },
+            "control": {
+              "execution_mode": "sync"
+            }
+          }
+          EOF
+          )
+
+            JSON_BODY_MULTIPLY=$(cat <<EOF
+          {
+            "data": {
+              "flow_id": "$FLOW_ID",
+              "node_id": "$NODE_ID",
+              "src_code": "$MULTIPLY_CODE"
+            },
+            "metadata": {
+              "version": "v1.0",
+              "entity_id": "string"
+            },
+            "control": {
+              "execution_mode": "sync"
+            }
+          }
+          EOF
+          )
+
             
             RESPONSE_NODES=$(curl -X 'POST' \
               'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/get-decision-graph/sandbox/decide' \
