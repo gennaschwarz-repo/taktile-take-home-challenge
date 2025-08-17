@@ -110,10 +110,6 @@ jobs:
               # echo "Patch Decisions Graph Response: $RESPONSE_NODES"
 
             echo "Decision Graph successfully retrieved for Flow ID: $FLOW_ID."
-            
-          FLOWS=$(echo "$RESPONSE_FLOWS" | jq -r '.data.flows[].flow_id')
-          echo "Decision Flow IDs: "
-          echo "$FLOWS"
           
             GRAPH=$(echo "$RESPONSE_NODES" | jq -r '.data.graph')
             NODES=$(echo "$RESPONSE_NODES" | jq -r '.data.graph[].node_id')
@@ -126,8 +122,9 @@ jobs:
               NODE_NAME=$(echo "$NODE" | jq -r '.node_name')
               NODE_TYPE=$(echo "$NODE" | jq -r '.node_type')
               NODE_ID=$(echo "$NODE" | jq -r '.node_id')
-              echo "Node name: $NODE_NAME"
-              echo "Node type: $NODE_TYPE"
+              echo "Node $NODE_ID"
+              echo "Name: $NODE_NAME"
+              echo "Type: $NODE_TYPE"
                 
               JSON_BODY_SUMMARIZE=$(cat <<EOF
           {
@@ -168,30 +165,42 @@ jobs:
               if [[ "$NODE_TYPE" == "code_node" && "$NODE_NAME" == "Summarize" ]]; then
                 echo "Running Process to Patch Summarize Node: $NODE_ID"
                 
-                curl -X 'POST' \
+                RESPONSE_SUMMARIZE=$(curl -X 'POST' \
                   'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/patch-decision-graph/sandbox/decide' \
                   -H 'accept: application/json' \
                   -H 'Content-Type: application/json' \
                   -H 'X-Api-Key: ${{ secrets.TAKTILE_API_KEY }}' \
-                  -d "$JSON_BODY_SUMMARIZE"
+                  -d "$JSON_BODY_SUMMARIZE")
+
+                  STATUS_SUMMARIZE=$(echo "$RESPONSE_SUMMARIZE" | jq -r '.status')
+                  if [[ "$STATUS_SUMMARIZE" == "success" ]]; then
+                    echo "Patch Process Complete for Flow: $FLOW_ID"
+                  else
+                    echo "Request failed with status: $STATUS_SUMMARIZE"
+                  fi
                   
               elif [[ "$NODE_TYPE" == "code_node" && "$NODE_NAME" == "Multiply" ]]; then
                 echo "Running Process to Patch Multiply Node: $NODE_ID"
                
-                curl -X 'POST' \
+                RESPONSE_MULTIPLY=$(curl -X 'POST' \
                   'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/patch-decision-graph/sandbox/decide' \
                   -H 'accept: application/json' \
                   -H 'Content-Type: application/json' \
                   -H 'X-Api-Key: ${{ secrets.TAKTILE_API_KEY }}' \
-                  -d "$JSON_BODY_MULTIPLY"
+                  -d "$JSON_BODY_MULTIPLY")
                   
+                  STATUS_MULTIPLY=$(echo "$RESPONSE_MULTIPLY" | jq -r '.status')
+                  if [[ "$STATUS_MULTIPLY" == "success" ]]; then
+                    echo "Patch Process Complete for Flow: $FLOW_ID"
+                  else
+                    echo "Request failed with status: $STATUS_MULTIPLY"
+                  fi
+
               else
                 echo "Not Patching Node $NODE_ID. Reason: NOT A CODE NODE"
               fi
               
             done
-
-            echo "Patch Process Complete for Flow: $FLOW_ID"
 
           done
           
