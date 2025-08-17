@@ -29,7 +29,7 @@ jobs:
         id: python
         run: |
           
-          echo "Start process to sync code to Decision Flows"
+          echo "Identify Current Python Code"
           
           SUMMARIZE_CODE=$(jq -Rs . < Summarize.py)
           
@@ -44,7 +44,8 @@ jobs:
       - name: Identify Decision Flows
         id: flows
         run: |
-        
+
+          echo "Identify Decision Flows"
           RESPONSE_FLOWS=$(curl -X 'POST' \
             'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/list-decision-graphs/sandbox/decide' \
             -H 'accept: application/json' \
@@ -68,12 +69,11 @@ jobs:
           FLOWS=$(echo "$RESPONSE_FLOWS" | jq -r '.data.flows[]')
           echo "Decision Flows: "
           echo "$FLOWS"
-          echo "flows=$FLOWS" >> $GITHUB_OUTPUT
 
       - name: Get Decision Graph
         id: graph
         run: |
-          for FLOW_ID in $(echo "${{ steps.flows.outputs.flows }}" | jq -r '.[].flow_id'); do
+          for FLOW_ID in $(echo ${{ steps.flows.outputs.response_flows }} | jq -r '.data.flows[].flow_id'); do
             echo "Retrieve Decision Graph for Flow ID: $FLOW_ID"
            
             JSON_BODY_DECISION=$(cat <<EOF
