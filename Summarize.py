@@ -1,5 +1,5 @@
 def add(data):
-    """Function that summarized cols a and b"""
+    """Function that summarized cols x and y"""
 
     data["sum"] = data["a"] + data["b"]
 
