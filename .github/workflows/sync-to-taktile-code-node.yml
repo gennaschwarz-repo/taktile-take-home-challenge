@@ -25,26 +25,8 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
-      # Read the multiply python file
-      - name: Read Python file
-        id: read_multiple
+      - name: Sync Code to Taktile Code Node
         run: |
-          FILE_PATH="Multiply.py"
-          CONTENT=$(cat $FILE_PATH | jq -Rs .)
-          echo "code=$CONTENT" >> $GITHUB_OUTPUT
-
-      # Read the multiply python file
-      - name: Read Python file
-        id: read_summarize
-        run: |
-          FILE_PATH="Summarize.py"
-          CONTENT=$(cat $FILE_PATH | jq -Rs .)
-          echo "code=$CONTENT" >> $GITHUB_OUTPUT
-
-      # Return a list of Decision Flows in a NB36’s workspace.
-      - name: List Decision Flows
-        run: |
-          set -x
           echo "Start process to sync code to Decision Flows"
           SUMMARIZE_CODE=$(jq -Rs . < Summarize.py)
           MULTIPLY_CODE=$(jq -Rs . < Multiply.py)
