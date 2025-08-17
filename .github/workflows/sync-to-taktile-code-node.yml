@@ -164,7 +164,7 @@ jobs:
                   -H 'accept: application/json' \
                   -H 'Content-Type: application/json' \
                   -H 'X-Api-Key: ${{ secrets.TAKTILE_API_KEY }}' \
-                  -d "$JSON_BODY_SUMMARIZE"
+                  -d $JSON_BODY_SUMMARIZE
                   
               elif [[ "$NODE_TYPE" == "code_node" && "$NODE_NAME" == "Multiply" ]]; then
                 echo "Running Process to Patch Multiply Node: $NODE_ID"
@@ -174,7 +174,7 @@ jobs:
                   -H 'accept: application/json' \
                   -H 'Content-Type: application/json' \
                   -H 'X-Api-Key: ${{ secrets.TAKTILE_API_KEY }}' \
-                  -d "$JSON_BODY_MULTIPLY"
+                  -d $JSON_BODY_MULTIPLY
                   
               else
                 echo "Not Patching Node $NODE_ID. Reason: NOT A CODE NODE"
