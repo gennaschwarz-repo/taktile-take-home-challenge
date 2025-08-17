@@ -107,20 +107,19 @@ jobs:
             # Additional DEBUG lines if needed
               # echo "DEBUG: Payload being sent:"
               # echo "$JSON_BODY_DECISION" | jq 
-            
+              # echo "Patch Decisions Graph Response: $RESPONSE_NODES"
+
             echo "Decision Graph successfully retrieved for Flow ID: $FLOW_ID."
             
-            echo "Patch Decisions Graph Response: $RESPONSE_NODES"
-
-
           FLOWS=$(echo "$RESPONSE_FLOWS" | jq -r '.data.flows[].flow_id')
           echo "Decision Flow IDs: "
           echo "$FLOWS"
           
             GRAPH=$(echo "$RESPONSE_NODES" | jq -r '.data.graph')
-            NODES=$(echo "$RESPONSE_NODES" | jq -r '.data.graph[].node*')
+            NODES=$(echo "$RESPONSE_NODES" | jq -r '.data.graph[].node_id')
             echo "Nodes in Graph for Flow ID: $FLOW_ID"
             echo "$NODES"
+            echo "Start Update Code Node Process"
             
             echo "$GRAPH" | jq -c '.[]' | while read -r NODE; do
             
