@@ -109,23 +109,7 @@ jobs:
               echo "Node TYPE: $NODE_TYPE"
               echo "Running Process to Patch Node: $NODE_ID"
 
-              JSON_BODY_PATCH=$(cat <<EOF
-            {
-              "data": {
-                "flow_id": "$FLOW_ID",
-                "node_id": "$NODE_ID",
-                "src_code": "read_summary"
-              },
-              "metadata": {
-                "version": "v1.0",
-                "entity_id": "string"
-              },
-              "control": {
-                "execution_mode": "sync"
-              }
-            }
-            EOF
-            )
+             
   
           
               
