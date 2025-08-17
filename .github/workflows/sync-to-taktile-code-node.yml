@@ -23,8 +23,8 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
       
-      # Toggle DEBUG statis to true to help troubleshoot any issues 
-      - name: Set DEBUG status
+      # Toggle DEBUG status to true to help troubleshoot any issues 
+      - name: Enable/Disable Debugging
         id: debug
         run: |
           # toggle here
@@ -37,8 +37,8 @@ jobs:
           fi
           echo "debug=$DEBUG" >> $GITHUB_OUTPUT
 
-      # Set and save python coded used to update nodes
-      - name: Identify Current Python Code
+      # Retrieves the current code of Summarize and Multiply files from the main branch
+      - name: Set Current Code
         id: python
         run: |
           echo
@@ -57,7 +57,8 @@ jobs:
           echo "$MULTIPLY_CODE"
           echo "multiply_code=$MULTIPLY_CODE" >> $GITHUB_OUTPUT
 
-      - name: Identify Decision Flows
+      # Requests and saves a list of Decision Flows in NB36’s workspace
+      - name: Request Decision Flows
         id: flows
         run: |
           echo
@@ -101,6 +102,7 @@ jobs:
             echo
           fi
 
+          # extract response for flow_ids
           FLOWS=$(echo "$RESPONSE_FLOWS" | jq -r '.data.flows[].flow_id')
           
           echo "Decision Flow IDs: "
@@ -114,6 +116,7 @@ jobs:
           echo
           echo "Request Decision Graph and Update Code Nodes"
           echo
+          # For each Desicion Flow
           for FLOW_ID in ${{ steps.flows.outputs.flow_ids }}; do
             echo "Request Decision Graph for Flow ID: $FLOW_ID"
             echo
@@ -133,7 +136,7 @@ jobs:
           }
           EOF
           )  
-            
+            # Request an overview of the nodes in a specific graph
             RESPONSE_NODES=$(curl -X 'POST' \
               'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/get-decision-graph/sandbox/decide' \
               -H 'accept: application/json' \
@@ -172,6 +175,7 @@ jobs:
             echo
             echo "UPDATE CODE NODES"
             echo
+            # Extracts each node's id, name, and type from the response
             echo "$GRAPH" | jq -c '.[]' | while read -r NODE; do
             
               NODE_NAME=$(echo "$NODE" | jq -r '.node_name')
@@ -217,7 +221,7 @@ jobs:
           EOF
           )
               
-                
+              # The endpoint patches each Code Node with the updated Summarize or Multiply files  
               if [[ "$NODE_TYPE" == "code_node" && "$NODE_NAME" == "Summarize" ]]; then
                 
                 echo "Syncing Summarize Node: $NODE_ID"
