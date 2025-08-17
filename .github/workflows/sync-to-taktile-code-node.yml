@@ -101,7 +101,7 @@ jobs:
             
             echo "Patch Decisions Graph Response: $RESPONSE_NODES"
 
-            echo "$RESPONSE" | jq -c '.data.graph[]' | while read -r NODE; do
+            echo "$RESPONSE_NODES" | jq -c '.data.graph' | while read -r NODE; do
               NODE_NAME=$(echo "$NODE" | jq -r '.node_name')
               NODE_TYPE=$(echo "$NODE" | jq -r '.node_type')
               NODE_ID=$(echo "$NODE" | jq -r '.node_id')
