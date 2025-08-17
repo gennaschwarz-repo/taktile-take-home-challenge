@@ -16,7 +16,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  sync-code:
+  sync-code-with-taktile:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -24,12 +24,17 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
+      - name: Set DEBUG status
+        id: debug
 
+          DEBUG=false
+        
       - name: Identify Current Python Code
         id: python
         run: |
           
           echo "Identify Current Python Code"
+          echo
           
           SUMMARIZE_CODE=$(jq -Rs . < Summarize.py)
           
@@ -38,7 +43,7 @@ jobs:
           echo "Current Summarize Code: "
           echo "$SUMMARIZE_CODE"
           echo "summarize_code=$SUMMARIZE_CODE" >> $GITHUB_OUTPUT
-          
+          echo
           echo "Current Multiply Code: "
           echo "$MULTIPLY_CODE"
           echo "multiply_code=$MULTIPLY_CODE" >> $GITHUB_OUTPUT
@@ -48,6 +53,7 @@ jobs:
         run: |
 
           echo "Identify Decision Flow IDs"
+          echo
           RESPONSE_FLOWS=$(curl -X 'POST' \
             'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/list-decision-graphs/sandbox/decide' \
             -H 'accept: application/json' \
@@ -66,9 +72,10 @@ jobs:
             }
           }')
           
-          echo "response_flows=$RESPONSE_FLOWS" >> $GITHUB_OUTPUT
+          # echo "$RESPONSE_FLOWS"
 
           FLOWS=$(echo "$RESPONSE_FLOWS" | jq -r '.data.flows[].flow_id')
+          echo
           echo "Decision Flow IDs: "
           echo "$FLOWS"
           echo "flow_ids=$FLOWS" >> $GITHUB_OUTPUT
@@ -77,10 +84,11 @@ jobs:
         id: graph
         run: |
 
-          echo "Retrieve Decision Graphs"
+          echo "Retrieve Decision Graph and Update Code Nodes"
+          echo
           for FLOW_ID in ${{ steps.flows.outputs.flow_ids }}; do
             echo "Retrieve Decision Graph for Flow ID: $FLOW_ID"
-           
+            echo
             JSON_BODY_DECISION=$(cat <<EOF
           {
             "data": {
@@ -108,14 +116,15 @@ jobs:
               # echo "DEBUG: Payload being sent:"
               # echo "$JSON_BODY_DECISION" | jq 
               # echo "Patch Decisions Graph Response: $RESPONSE_NODES"
-
+            echo
             echo "Decision Graph successfully retrieved for Flow ID: $FLOW_ID."
           
             GRAPH=$(echo "$RESPONSE_NODES" | jq -r '.data.graph')
             NODES=$(echo "$RESPONSE_NODES" | jq -r '.data.graph[].node_id')
             echo "Nodes in Graph for Flow ID: $FLOW_ID"
             echo "$NODES"
-            echo "Start Update Code Node Process"
+            echo
+            echo "Update Code Nodes"
             
             echo "$GRAPH" | jq -c '.[]' | while read -r NODE; do
             
@@ -175,8 +184,10 @@ jobs:
                   STATUS_SUMMARIZE=$(echo "$RESPONSE_SUMMARIZE" | jq -r '.status')
                   if [[ "$STATUS_SUMMARIZE" == "success" ]]; then
                     echo "Patch Process Complete for Flow: $FLOW_ID"
+                    echo
                   else
                     echo "Request failed with status: $STATUS_SUMMARIZE"
+                    echo
                   fi
                   
               elif [[ "$NODE_TYPE" == "code_node" && "$NODE_NAME" == "Multiply" ]]; then
@@ -192,12 +203,15 @@ jobs:
                   STATUS_MULTIPLY=$(echo "$RESPONSE_MULTIPLY" | jq -r '.status')
                   if [[ "$STATUS_MULTIPLY" == "success" ]]; then
                     echo "Patch Process Complete for Flow: $FLOW_ID"
+                    echo
                   else
                     echo "Request failed with status: $STATUS_MULTIPLY"
+                    echo
                   fi
 
               else
                 echo "Not Patching Node $NODE_ID. Reason: NOT A CODE NODE"
+                echo
               fi
               
             done
