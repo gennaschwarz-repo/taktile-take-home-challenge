@@ -112,10 +112,8 @@ jobs:
               echo "Node name: $NODE_NAME"
               echo "Node type: $NODE_TYPE"
 
-             [[ "$VAR1" == "value1" && "$VAR2" == "value2" ]]
               if [[ "$NODE_TYPE" == "code_node" && "$NODE_NAME" == "Summarize"]]; then
                 echo "Running Process to Patch Summarize Node: $NODE_ID"
-
               elif [[ "$NODE_TYPE" == "code_node" && "$NODE_NAME" == "Multiply"]]; then
                 echo "Running Process to Patch Multiply Node: $NODE_ID"
               else
