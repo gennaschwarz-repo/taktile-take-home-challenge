@@ -109,15 +109,24 @@ jobs:
               NODE_NAME=$(echo "$NODE" | jq -r '.node_name')
               NODE_TYPE=$(echo "$NODE" | jq -r '.node_type')
               NODE_ID=$(echo "$NODE" | jq -r '.node_id')
-              echo "Node NAME: $NODE_NAME"
-              echo "Node TYPE: $NODE_TYPE"
-              echo "Running Process to Patch Node: $NODE_ID"
+              echo "Node name: $NODE_NAME"
+              echo "Node type: $NODE_TYPE"
 
-             
-              
-              echo "Successfully Patched Node: $NODE_ID"
+             [[ "$VAR1" == "value1" && "$VAR2" == "value2" ]]
+              if [[ "$NODE_TYPE" == "code_node" && "$NODE_NAME" == "Summarize"]]; then
+                echo "Running Process to Patch Summarize Node: $NODE_ID"
+
+              elif [[ "$NODE_TYPE" == "code_node" && "$NODE_NAME" == "Multiply"]]; then
+                echo "Running Process to Patch Multiply Node: $NODE_ID"
+              else
+                echo "Not Patching Node $NODE_ID"
+              fi
+
               
             done
+
+            echo "Patch Process Complete for Flow: $FLOW_ID"
+
           done
           
             
