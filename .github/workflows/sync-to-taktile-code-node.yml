@@ -101,17 +101,15 @@ jobs:
             
             echo "Patch Decisions Graph Response: $RESPONSE_NODES"
 
-            for GRAPH in $(echo "$RESPONSE_NODES" | jq -r '.data.graph[]'); do
-              NODE_NAME=$(echo "$GRAPH" | jq -r '.node_name')
-              NODE_TYPE=$(echo "$GRAPH" | jq -r '.node_type')
-              NODE_ID=$(echo "$GRAPH" | jq -r '.node_id')
+            echo "$RESPONSE" | jq -c '.data.graph[]' | while read -r NODE; do
+              NODE_NAME=$(echo "$NODE" | jq -r '.node_name')
+              NODE_TYPE=$(echo "$NODE" | jq -r '.node_type')
+              NODE_ID=$(echo "$NODE" | jq -r '.node_id')
               echo "Node NAME: $NODE_NAME"
               echo "Node TYPE: $NODE_TYPE"
               echo "Running Process to Patch Node: $NODE_ID"
 
              
-  
-          
               
               echo "Successfully Patched Node: $NODE_ID"
               
