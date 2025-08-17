@@ -29,7 +29,8 @@ jobs:
       - name: Set DEBUG status
         id: debug
         run: |
-          DEBUG=false
+          # toggle here
+          DEBUG=true
           echo
           if [ "$DEBUG" = true ]; then
             echo "Debugging is ON"
@@ -85,11 +86,12 @@ jobs:
           # check status of response
           STATUS_FLOWS=$(echo "$RESPONSE_FLOWS" | jq -r '.status')
           if [[ "$STATUS_FLOWS" == "success" ]]; then
-            echo "Flows Returned Successfully!"
             echo
+            echo "Decision Flows Retrieved Successfully!"
+            
           else
             echo "Request failed with status: $STATUS_FLOWS"
-            echo
+            
           fi
             
           # Additional DEBUG lines if needed
@@ -112,10 +114,10 @@ jobs:
         id: graph
         run: |
           echo
-          echo "Retrieve Decision Graph and Update Code Nodes"
+          echo "Request Decision Graph and Update Code Nodes"
           echo
           for FLOW_ID in ${{ steps.flows.outputs.flow_ids }}; do
-            echo "Retrieve Decision Graph for Flow ID: $FLOW_ID"
+            echo "Request Decision Graph for Flow ID: $FLOW_ID"
             echo
             
             JSON_BODY_DECISION=$(cat <<EOF
@@ -144,7 +146,7 @@ jobs:
             # check status of response
             STATUS_NODES=$(echo "$RESPONSE_NODES" | jq -r '.status')
             if [[ "$STATUS_NODES" == "success" ]]; then
-              echo "Nodes Returned Successfully!"
+              echo "Nodes Retrieved Successfully!"
               echo
             else
               echo "Request failed with status: $STATUS_NODES"
@@ -289,6 +291,7 @@ jobs:
               
             done
             echo "Patching Process Complete for Flow: $FLOW_ID"
+            echo
           done
           echo "Update the Taktile Code Nodes Process Complete"
           
