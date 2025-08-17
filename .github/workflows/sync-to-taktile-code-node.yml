@@ -94,12 +94,43 @@ jobs:
           
         
             echo "DEBUG: Payload being sent:"
+            
             echo "$JSON_BODY_DECISION" | jq 
-            echo "Flow ID $FLOW_ID updated successfully."
-            echo "Patch API Response: $RESPONSE_NODES"
+            
+            echo "Decision Graph for $FLOW_ID successfully retrieved."
+            
+            echo "Patch Decisions Graph Response: $RESPONSE_NODES"
 
-            for NODE_ID in $(echo "$RESPONSE_NODES" | jq -r '.data.graph[].node_id'); do
-              echo "Patch Node for Node ID: $NODE_ID"
+            for GRAPH in $(echo "$RESPONSE_NODES" | jq -r '.data.graph[]'); do
+              NODE_NAME=$GRAPH.node_name
+              NODE_TYPE=$GRAPH.node_type
+              NODE_ID=$GRAPH.node_id
+              echo "Node NAME: $NODE_NAME"
+              echo "Node TYPE: $NODE_TYPE"
+              echo "Running Process to Patch Node: $NODE_ID"
+
+              JSON_BODY_PATCH=$(cat <<EOF
+            {
+              "data": {
+                "flow_id": "$FLOW_ID",
+                "node_id": "$NODE_ID",
+                "src_code": "read_summary"
+              },
+              "metadata": {
+                "version": "v1.0",
+                "entity_id": "string"
+              },
+              "control": {
+                "execution_mode": "sync"
+              }
+            }
+            EOF
+            )
+  
+          
+              
+              echo "Successfully Patched Node: $NODE_ID"
+              
             done
           done
           
