@@ -120,7 +120,7 @@ jobs:
               echo "Node name: $NODE_NAME"
               echo "Node type: $NODE_TYPE"
                 
-              JSON_BODY_SUMMMARIZE=$(cat <<EOF
+              JSON_BODY_SUMMARIZE=$(cat <<EOF
           {
             "data": {
               "flow_id": "$FLOW_ID",
