@@ -25,15 +25,23 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
-      - name: Sync Code to Taktile Code Node
+      - name: Save Python Code
+        id: python
         run: |
           echo "Start process to sync code to Decision Flows"
+          
           SUMMARIZE_CODE=$(jq -Rs . < Summarize.py)
+          
           MULTIPLY_CODE=$(jq -Rs . < Multiply.py)
-          echo "Current Summarize Code: $SUMMARIZE_CODE"
-          echo "Current Multiply Code: $MULTIPLY_CODE"
+          
+          echo "Current Summarize Code: "
+          echo "summarize_code=$SUMMARIZE_CODE" >> $GITHUB_OUTPUT
+          
+          echo "Current Multiply Code: "
+          echo "multiply_code=$MULTIPLY_CODE" >> $GITHUB_OUTPUT
 
-
+      - name: Sync Code to Taktile Code Node
+        run: |
           RESPONSE=$(curl -X 'POST' \
             'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/list-decision-graphs/sandbox/decide' \
             -H 'accept: application/json' \
@@ -107,7 +115,7 @@ jobs:
             "data": {
               "flow_id": "$FLOW_ID",
               "node_id": "$NODE_ID",
-              "src_code": $SUMMARIZE_CODE
+              "src_code": ${{ steps.python.outputs.summarize_code }}
             },
             "metadata": {
               "version": "v1.0",
@@ -125,7 +133,7 @@ jobs:
             "data": {
               "flow_id": "$FLOW_ID",
               "node_id": "$NODE_ID",
-              "src_code": $MULTIPLY_CODE
+              "src_code": ${{ steps.python.outputs.multiply_code }}
             },
             "metadata": {
               "version": "v1.0",
