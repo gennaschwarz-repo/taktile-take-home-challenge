@@ -91,42 +91,7 @@ jobs:
           EOF
           )
 
-            JSON_BODY_SUMMMARIZE=$(cat <<EOF
-          {
-            "data": {
-              "flow_id": "$FLOW_ID",
-              "node_id": "$NODE_ID",
-              "src_code": "$SUMMARIZE_CODE"
-            },
-            "metadata": {
-              "version": "v1.0",
-              "entity_id": "string"
-            },
-            "control": {
-              "execution_mode": "sync"
-            }
-          }
-          EOF
-          )
-
-            JSON_BODY_MULTIPLY=$(cat <<EOF
-          {
-            "data": {
-              "flow_id": "$FLOW_ID",
-              "node_id": "$NODE_ID",
-              "src_code": "$MULTIPLY_CODE"
-            },
-            "metadata": {
-              "version": "v1.0",
-              "entity_id": "string"
-            },
-            "control": {
-              "execution_mode": "sync"
-            }
-          }
-          EOF
-          )
-
+        
             
             RESPONSE_NODES=$(curl -X 'POST' \
               'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/get-decision-graph/sandbox/decide' \
@@ -154,23 +119,63 @@ jobs:
               NODE_ID=$(echo "$NODE" | jq -r '.node_id')
               echo "Node name: $NODE_NAME"
               echo "Node type: $NODE_TYPE"
+                
+              JSON_BODY_SUMMMARIZE=$(cat <<EOF
+          {
+            "data": {
+              "flow_id": "$FLOW_ID",
+              "node_id": "$NODE_ID",
+              "src_code": "$SUMMARIZE_CODE"
+            },
+            "metadata": {
+              "version": "v1.0",
+              "entity_id": "string"
+            },
+            "control": {
+              "execution_mode": "sync"
+            }
+          }
+          EOF
+          )
+
+              JSON_BODY_MULTIPLY=$(cat <<EOF
+          {
+            "data": {
+              "flow_id": "$FLOW_ID",
+              "node_id": "$NODE_ID",
+              "src_code": "$MULTIPLY_CODE"
+            },
+            "metadata": {
+              "version": "v1.0",
+              "entity_id": "string"
+            },
+            "control": {
+              "execution_mode": "sync"
+            }
+          }
+          EOF
+          )
 
               if [[ "$NODE_TYPE" == "code_node" && "$NODE_NAME" == "Summarize" ]]; then
                 echo "Running Process to Patch Summarize Node: $NODE_ID"
+                
                 curl -X 'POST' \
                   'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/patch-decision-graph/sandbox/decide' \
                   -H 'accept: application/json' \
                   -H 'Content-Type: application/json' \
                   -H 'X-Api-Key: ${{ secrets.TAKTILE_API_KEY }}' \
                   -d "$JSON_BODY_SUMMARIZE"
+                  
               elif [[ "$NODE_TYPE" == "code_node" && "$NODE_NAME" == "Multiply" ]]; then
                 echo "Running Process to Patch Multiply Node: $NODE_ID"
+               
                 curl -X 'POST' \
                   'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/patch-decision-graph/sandbox/decide' \
                   -H 'accept: application/json' \
                   -H 'Content-Type: application/json' \
                   -H 'X-Api-Key: ${{ secrets.TAKTILE_API_KEY }}' \
                   -d "$JSON_BODY_MULTIPLY"
+                  
               else
                 echo "Not Patching Node $NODE_ID. Reason: NOT A CODE NODE"
               fi
