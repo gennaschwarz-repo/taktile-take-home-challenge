@@ -12,10 +12,6 @@ A GitHub Actions workflow has been configured at the following location: .github
 
 This workflow, when triggered, executes the following actions step-by-step:
 
-**Enable/Disable Debugging**
-1. Sets the toggle for NB36 to hide/gain additional visibility into API requests/responses
-2. Ex: Setting 'DEBUG=true' (see line 31) will enable additional debugging
-
 **Set Current Code**
 1. Retrieves the current code of Summarize and Multiply files from the main branch
 2. Path to files is 'Summarize.py' and 'Multiply.py'
@@ -63,8 +59,11 @@ Please see the following GitHub documentation for more information:
 
 ## Additional Information
 
-- You can view worflow runs, their status, and details through the 'Actions' tab
+- You can view workflow runs, their status, and details through the 'Actions' tab
 - Additionally, you can view, search, and download the logs for each job in a workflow run: https://docs.github.com/en/actions/how-tos/monitor-workflows/use-workflow-run-logs
+
+**Enable/Disable Debugging**
 - If a 'sync-code-with-taktile' job fails, please consider toggling DEBUG (see line 31) to 'DEBUG=true' as that will enable additional visibility into the Taktile API responses
+- Ability to set a toggle for NB36 to hide/gain additional visibility into API requests/responses
 
 Please reach out to Genna Schwarz if you have any questions or additional requests!
