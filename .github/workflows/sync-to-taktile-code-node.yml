@@ -35,17 +35,19 @@ jobs:
           
           MULTIPLY_CODE=$(jq -Rs . < Multiply.py)
           
-          echo "Current Summarize Code: $SUMMARIZE_CODE"
+          echo "Current Summarize Code: "
+          echo "$SUMMARIZE_CODE"
           echo "summarize_code=$SUMMARIZE_CODE" >> $GITHUB_OUTPUT
           
-          echo "Current Multiply Code: $MULTIPLY_CODE"
+          echo "Current Multiply Code: "
+          echo "$MULTIPLY_CODE"
           echo "multiply_code=$MULTIPLY_CODE" >> $GITHUB_OUTPUT
 
       - name: Identify Decision Flows
         id: flows
         run: |
 
-          echo "Identify Decision Flows"
+          echo "Identify Decision Flow IDs"
           RESPONSE_FLOWS=$(curl -X 'POST' \
             'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/list-decision-graphs/sandbox/decide' \
             -H 'accept: application/json' \
@@ -67,13 +69,15 @@ jobs:
           echo "response_flows=$RESPONSE_FLOWS" >> $GITHUB_OUTPUT
 
           FLOWS=$(echo "$RESPONSE_FLOWS" | jq -r '.data.flows[].flow_id')
-          echo "Decision Flows: "
+          echo "Decision Flow IDs: "
           echo "$FLOWS"
           echo "flow_ids=$FLOWS" >> $GITHUB_OUTPUT
 
-      - name: Get Decision Graph
+      - name: Retrieve Decision Graph and Update Code Nodes
         id: graph
         run: |
+
+          echo "Retrieve Decision Graphs"
           for FLOW_ID in ${{ steps.flows.outputs.flow_ids }}; do
             echo "Retrieve Decision Graph for Flow ID: $FLOW_ID"
            
@@ -91,9 +95,7 @@ jobs:
             }
           }
           EOF
-          )
-
-        
+          )  
             
             RESPONSE_NODES=$(curl -X 'POST' \
               'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/get-decision-graph/sandbox/decide' \
@@ -101,18 +103,24 @@ jobs:
               -H 'Content-Type: application/json' \
               -H 'X-Api-Key: ${{ secrets.TAKTILE_API_KEY }}' \
               -d "$JSON_BODY_DECISION")
-          
         
-            echo "DEBUG: Payload being sent:"
+            # Additional DEBUG lines if needed
+              # echo "DEBUG: Payload being sent:"
+              # echo "$JSON_BODY_DECISION" | jq 
             
-            echo "$JSON_BODY_DECISION" | jq 
-            
-            echo "Decision Graph for $FLOW_ID successfully retrieved."
+            echo "Decision Graph successfully retrieved for Flow ID: $FLOW_ID."
             
             echo "Patch Decisions Graph Response: $RESPONSE_NODES"
 
+
+          FLOWS=$(echo "$RESPONSE_FLOWS" | jq -r '.data.flows[].flow_id')
+          echo "Decision Flow IDs: "
+          echo "$FLOWS"
+          
             GRAPH=$(echo "$RESPONSE_NODES" | jq -r '.data.graph')
-            echo "The returned Graph: $GRAPH"
+            NODES=$(echo "$RESPONSE_NODES" | jq -r '.data.graph[].node*')
+            echo "Nodes in Graph for Flow ID: $FLOW_ID"
+            echo "$NODES"
             
             echo "$GRAPH" | jq -c '.[]' | while read -r NODE; do
             
