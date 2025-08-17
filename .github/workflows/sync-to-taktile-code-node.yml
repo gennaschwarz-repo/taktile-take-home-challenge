@@ -47,7 +47,7 @@ jobs:
           set -x
           echo "Start process to sync code to Decision Flows"
           SUMMARIZE_CODE=$(jq -Rs . < Summarize.py)
-          MULTIPLY_CODE=$(jq -Rs . < Mulitply.py)
+          MULTIPLY_CODE=$(jq -Rs . < Multiply.py)
           echo "Current Summarize Code: $SUMMARIZE_CODE"
           echo "Current Multiply Code: $MULTIPLY_CODE"
 
