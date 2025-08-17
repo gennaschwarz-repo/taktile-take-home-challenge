@@ -45,6 +45,13 @@ jobs:
       - name: List Decision Flows
         run: |
           set -x
+          echo "Start process to sync code to Decision Flows"
+          SUMMARIZE_CODE=$(jq -Rs . < Summarize.py)
+          MULTIPLY_CODE=$(jq -Rs . < Mulitply.py)
+          echo "Current Summarize Code: $SUMMARIZE_CODE"
+          echo "Current Multiply Code: $MULTIPLY_CODE"
+
+
           RESPONSE=$(curl -X 'POST' \
             'https://eu-central-1.taktile-org.decide.taktile.com/run/api/v1/flows/list-decision-graphs/sandbox/decide' \
             -H 'accept: application/json' \
@@ -117,9 +124,8 @@ jobs:
               elif [[ "$NODE_TYPE" == "code_node" && "$NODE_NAME" == "Multiply" ]]; then
                 echo "Running Process to Patch Multiply Node: $NODE_ID"
               else
-                echo "Not Patching Node $NODE_ID"
+                echo "Not Patching Node $NODE_ID. Reason: NOT A CODE NODE"
               fi
-
               
             done
 
