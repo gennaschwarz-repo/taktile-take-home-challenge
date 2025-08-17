@@ -102,9 +102,9 @@ jobs:
             echo "Patch Decisions Graph Response: $RESPONSE_NODES"
 
             for GRAPH in $(echo "$RESPONSE_NODES" | jq -r '.data.graph[]'); do
-              NODE_NAME=${{ GRAPH.node_name }}
-              NODE_TYPE=${{ GRAPH.node_type }}
-              NODE_ID=${{ GRAPH.node_id }}
+              NODE_NAME=${{ $GRAPH.node_name }}
+              NODE_TYPE=${{ $GRAPH.node_type }}
+              NODE_ID=${{ $GRAPH.node_id }}
               echo "Node NAME: $NODE_NAME"
               echo "Node TYPE: $NODE_TYPE"
               echo "Running Process to Patch Node: $NODE_ID"
