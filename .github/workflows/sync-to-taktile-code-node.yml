@@ -69,7 +69,7 @@ jobs:
           FLOWS=$(echo "$RESPONSE_FLOWS" | jq -r '.data.flows[].flow_id')
           echo "Decision Flows: "
           echo "$FLOWS"
-          echo "flows_ids=$FLOWS" >> $GITHUB_OUTPUT
+          echo "flow_ids=$FLOWS" >> $GITHUB_OUTPUT
 
       - name: Get Decision Graph
         id: graph
