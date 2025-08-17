@@ -104,7 +104,7 @@ jobs:
             GRAPH=$(echo "$RESPONSE_NODES" | jq -r '.data.graph')
             echo "The returned Graph: $GRAPH"
             
-            echo "$RESPONSE" | jq -c '.data.graph // [] | .[]' | while read -r NODE; do
+            echo "$GRAPH" | jq -c '.[]' | while read -r NODE; do
             
               NODE_NAME=$(echo "$NODE" | jq -r '.node_name')
               NODE_TYPE=$(echo "$NODE" | jq -r '.node_type')
