@@ -28,7 +28,7 @@ jobs:
         id: debug
         run: |
           # toggle here
-          DEBUG=true
+          DEBUG=false
           echo
           if [ "$DEBUG" = true ]; then
             echo "Debugging is ON"
