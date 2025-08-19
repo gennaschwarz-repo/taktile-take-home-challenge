@@ -4,7 +4,23 @@ Taktile-GitHub integration to automatically update the Taktile Code Nodes via AP
 
 ## Request
 
-Neobank NB36 would like to use GitHub to store their code for Taktile Decision Flow's Code Nodes. When releasing a new version of the code in their GitHub repository, they would like to automatically update the Taktile Code Nodes via API. I created a Github Actions workflow to automate this process. 
+Neobank NB36 would like to use GitHub to store their code for Taktile Decision Flow's Code Nodes. When releasing a new version of the code in their GitHub repository, they would like to automatically update the Taktile Code Nodes via API. 
+
+## Background
+
+Taktile has a Decision History API that can retrieve important data from and perform operations on Decision Flows in NB36's workspace.
+
+
+**Endpoints:**
+
+- List Decision Flows - Return a list of Decision Flows in a workspace
+- Get Decision Graph - Return an overview of the nodes in a specific graph
+- Patch Decision Graph - Patch the Decision Flow graph to change the Code Node’s code
+
+The Decision History API uses API keys to authenticate incoming requests.
+
+Please see the following documentation for more information on Taktile API Endpoints: 
+- https://taktile.notion.site/Taktile-Support-Engineer-THC-API-endpoints-936c19402a6e4aff8d9d836bf6aae4a7
 
 ## Solution
 
@@ -21,7 +37,7 @@ This workflow, when triggered, executes the following actions step-by-step:
 2. Requests a list of Decision Flows in NB36’s Taktile workspace 
 3. Extracts and saves all Flow IDs from the response
 
-**Retrieve Decision Graph and Update Code Nodes**
+**Retrieve and Update Code Nodes**
 
 For each Decision Flow:
 1. Utilizes Taktile's Get Decision Graph API Endpoint (see line 140 for curl command)
@@ -35,10 +51,7 @@ For each Node:
 
 **Authentication**
 
-The API calls use a stored secret called TAKTILE_API_KEY to authenticate securely with Taktile APIs.
-
-Please see the following documentation for more information on Taktile API Endpoints: 
-- https://taktile.notion.site/Taktile-Support-Engineer-THC-API-endpoints-936c19402a6e4aff8d9d836bf6aae4a7
+The API calls use a stored secret called TAKTILE_API_KEY to authenticate securely with Taktile's Decision History API
 
 ## Implementation
 
